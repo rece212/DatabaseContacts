@@ -1,4 +1,5 @@
-﻿using System;
+﻿using prjDatabaseContacts.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,6 +14,7 @@ namespace prjDatabaseContacts
 {
     public partial class frmLogin : Form
     {
+        ContactsContext db = new ContactsContext();
         public frmLogin()
         {
             InitializeComponent();
@@ -20,6 +22,29 @@ namespace prjDatabaseContacts
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
+
+            try
+            {
+                var detail = db.TblUsers.Where(ur => ur.Username.Equals(txtUsername.Text)
+            && ur.Password.Equals(txtPassword.Text)).FirstOrDefault();
+                if (detail != null)
+                {
+                    MessageBox.Show("Success");
+                    frmContactForms c = new frmContactForms(txtUsername.Text);
+                    txtPassword.Text = "";
+                    txtUsername.Text = "";
+                    this.Hide();
+                    c.ShowDialog();
+                    this.Show();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error , wrong details entered");
+            }
+
+
+            /*
             try
             {
                using (SqlConnection connection = new SqlConnection(Connection.conn))
@@ -51,7 +76,7 @@ namespace prjDatabaseContacts
             {
                 Console.WriteLine(ex.ToString());
             }
-            Console.ReadLine();
+            Console.ReadLine();*/
         }
 
         private void btnReg_Click(object sender, EventArgs e)
@@ -62,6 +87,22 @@ namespace prjDatabaseContacts
             }
             else
             {
+                try
+                {
+                    TblUser newUser = new TblUser();
+                    newUser.Password = txtPassword.Text;
+                    newUser.Username = txtUsername.Text;
+                    db.TblUsers.Add(newUser);
+                    db.SaveChanges();
+                }
+                catch (Exception ei)
+                {
+                    MessageBox.Show("User already exists");
+                }
+                
+
+
+                /*
                 try
                 {
                     using (SqlConnection connection = new SqlConnection(Connection.conn))
@@ -85,7 +126,7 @@ namespace prjDatabaseContacts
                 catch (SqlException ex)
                 {
                     MessageBox.Show("Error Connecting to the Database", "Connection Error");
-                }
+                }*/
                 txtPassword.Text = "";
                 txtUsername.Text = "";
             }

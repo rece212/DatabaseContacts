@@ -16,6 +16,9 @@ create table tblUsers(
 
 insert into tblUsers values('Jack','1234'),('Reece','4321');
 
+# Open Tools 
+#cmd then Dev
+then cd //Name of the folder( or do tab tab and will come up )
 
 dotnet add package Microsoft.EntityFrameworkCore.SqlServer -v 5.0.17
 dotnet add package Microsoft.EntityFrameworkCore.Design -v 5.0.17

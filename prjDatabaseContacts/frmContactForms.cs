@@ -1,4 +1,5 @@
-﻿using System;
+﻿using prjDatabaseContacts.Model;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +18,7 @@ namespace prjDatabaseContacts
         static String UserLogin = "";
         ArrayList arrContacts = new ArrayList();
         Contacts SelectedContactobj;
-
+        ContactsContext db =new ContactsContext();
         public frmContactForms(string text)
         {
             InitializeComponent();
@@ -31,6 +32,15 @@ namespace prjDatabaseContacts
         public void Reboot()
         {
             arrContacts = new ArrayList();
+
+            List<TblContact> temp= db.TblContacts.Where(ur => ur.Username.Equals(UserLogin)).ToList();
+            foreach (var item in temp)
+            {
+
+                Contacts temps = new Contacts(item.PersonId,item.FirstName,item.LastName, item.PhoneNumber, item.EmailAddress, item.Username);
+                arrContacts.Add(temps);
+            }
+            /*
             try
             {
                 using (SqlConnection connection = new SqlConnection(Connection.conn))
@@ -56,7 +66,7 @@ namespace prjDatabaseContacts
             catch (SqlException ex)
             {
                 MessageBox.Show(ex.ToString());
-            }
+            }*/
             refreshUI();
         }
         private void refreshUI()
@@ -171,6 +181,20 @@ namespace prjDatabaseContacts
                 SelectedContactobj.Surname= txtSurname.Text;
                 SelectedContactobj.EmailAddress= txtEmail.Text;
                 SelectedContactobj.Phonenumber= txtPhoneNumber.Text;
+
+    
+
+                TblContact c = (from x in db.TblContacts
+                              where x.PersonId == SelectedContactobj.ID
+                                select x).First();
+                c.PhoneNumber = SelectedContactobj.Phonenumber;
+                c.FirstName = SelectedContactobj.FirstName;
+                c.LastName = SelectedContactobj.Surname;
+                c.EmailAddress = SelectedContactobj.EmailAddress;
+                db.SaveChanges();
+
+
+                /*
                 try
                 {
                     using (SqlConnection connection = new SqlConnection(Connection.conn))
@@ -197,7 +221,7 @@ namespace prjDatabaseContacts
                 catch (SqlException ex)
                 {
                     MessageBox.Show("Error Connecting to the Database " + ex.ToString(), "Connection Error");
-                }
+                }*/
                 Reboot();
 
             }
@@ -210,6 +234,13 @@ namespace prjDatabaseContacts
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
+
+            TblContact RemoveItem = db.TblContacts.Where(b => b.PersonId == SelectedContactobj.ID).First();
+            db.TblContacts.Remove(RemoveItem);
+            db.SaveChanges();
+
+            /*
+
             try
             {
                 using (SqlConnection connection = new SqlConnection(Connection.conn))
@@ -230,7 +261,7 @@ namespace prjDatabaseContacts
             catch (SqlException ex)
             {
                 MessageBox.Show("Error Connecting to the Database " + ex.ToString(), "Connection Error");
-            }
+            }*/
             Reboot();
         }
 
